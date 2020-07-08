@@ -1,0 +1,125 @@
+<app-Titulos [titulos]="titulo"></app-Titulos>
+<!--TABELA DE USUÁRIOS-->
+  <div>
+    <table class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Sobrenome</th>
+            <th scope="col">Email</th>
+            <th scope="col">Data de Nascimento</th>
+            <th scope="col">Escolaridade</th>
+            <th scope="col">&nbsp;</th>
+            <th scope="col">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let usuario of usuarios">
+            <th scope="row">{{usuario.id}}</th>
+            <td>{{usuario.nome}}</td>
+            <td>{{usuario.sobrenome}}</td>
+            <td>{{usuario.email}}</td>
+            <td>{{usuario.dataNascimento}}</td>
+            <td>{{obterDescricaoEscolaridade(usuario.escolaridade)}}</td>
+            <td><button class="btn btn-sm btn-outline-primary" (click)="openModal(template, usuario)">Editar</button></td>
+            <td><button class="btn btn-sm btn-danger" (click)="openModalExcluir(modalExcluir, usuario)">Excluir</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-sm btn-outline-success" (click)="openModal(template, null)">Novo Usuario</button>
+</div>
+
+<!--MODAL CONTENDO O FORMULÁRIO DE PROCESSAMENTO DOS DADOS-->
+<ng-template #template>
+  
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Usuario</h4>
+  </div>
+  <div class="modal-body">
+    
+    <form [formGroup]="usuarioForm" (submit)="usuarioSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" class="form-control" placeholder="Nome" formControlName="nome">
+          </div>    
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="sobrenome">Sobrenome</label>
+            <input type="text" class="form-control" placeholder="Sobrenome" formControlName="sobrenome">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+         <div class="col-md-6">
+           <div class="form-group">
+              <label for="email">Email</label>
+              <input type="text" class="form-control" placeholder="Email" formControlName="email">
+           </div>
+         </div>
+         <div class="col-md-6">
+           <!--obs: Para processamento deste campo o modelo de data deve seguir o seguinte modelo: 
+              "1999-01-01" -->
+            <div class="form-group">
+               <label for="dataNascimento">Data de Nascimento</label>
+               <input type="text" class="form-control" placeholder="Data de Nascimento" formControlName="dataNascimento">
+               </div>
+         </div>
+      </div>
+
+      <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="tipoEscolaridade">Escolaridade</label>
+          <select id="tipoEscolaridade" class="form-control" name="tipoEscolaridade" formControlName="escolaridade" [(ngModel)]="tipoEscolaridade">
+            <option value='0'>Selecione</option>
+            <option *ngFor="let esc of escolaridades" value="{{esc.id}}">{{esc.descricao}}</option>
+          </select>
+        </div>
+       </div>
+      </div>
+
+      <!--Div para mostrar mensagens de erros-->
+      <div *ngIf="msgErro != null" class="row">
+        <div class="alert alert-danger" role="alert">
+           {{msgErro}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <hr />
+        <button *ngIf="usuarioSelecionado" class="btn btn-sm btn-success">Alterar</button>
+        <button type="submit" *ngIf="!usuarioSelecionado" class="btn btn-sm btn-success" [disabled]="!usuarioForm.valid">Criar</button>&nbsp;
+        <a class="btn btn-sm btn-warning" (click)="modalRef.hide()">Voltar</a>
+      </div>
+    
+    
+    </form>
+
+
+  </div>
+</ng-template>
+
+<!--Modal contendo a confirmação de exclusão do usuário-->
+<ng-template #modalExcluir>
+  
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Deletar Usuário</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12"><label>Deseja realmente deletar o usuário?</label></div>
+      
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <button class="btn btn-sm btn-outline-danger" (click)="excluirUsuario()">Confirmar</button>&nbsp;
+        <a class="btn btn-sm btn-warning" (click)="modalRef.hide()">Cancelar</a>
+      </div>
+      
+    </div>
+  </div>
+</ng-template>
